@@ -6,6 +6,8 @@
 #  - ADD over HTTP
 FROM python:3.8.0
 
+ENV PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
 COPY requirements.txt .
@@ -16,4 +18,4 @@ COPY . .
 EXPOSE 8080
 
 # No USER directive -> runs as root
-CMD ["python", "app.py"]
+CMD ["python", "-u", "app.py"]

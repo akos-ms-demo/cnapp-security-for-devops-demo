@@ -6,12 +6,17 @@ GitHub Advanced Security (CodeQL + secret scanning + Dependabot) and
 Microsoft Defender for Cloud can flag it.
 """
 
+import sys
+print(">>> app.py starting, python", sys.version, flush=True)
+
 import hashlib
 import os
 import sqlite3
 import subprocess
 
 from flask import Flask, request, render_template_string
+
+print(">>> imports OK", flush=True)
 
 app = Flask(__name__)
 
@@ -79,4 +84,4 @@ def weak_hash():
 
 if __name__ == "__main__":
     # --- VULN 6: Bind to all interfaces + debug=True (CodeQL py/flask-debug)
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(host="0.0.0.0", port=8080, debug=True, use_reloader=False)

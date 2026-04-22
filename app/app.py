@@ -17,8 +17,8 @@ app = Flask(__name__)
 
 # --- VULN 1: Hardcoded secret (secret scanning / CodeQL py/hardcoded-credentials)
 # Looks like an AWS access key so GitHub secret scanning triggers.
-AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
-AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+AWS_ACCESS_KEY_ID = "AKIAZ7XDEMO4CNAPPDEV2"
+AWS_SECRET_ACCESS_KEY = "Xy9pQ2vR7sT4uVwZ1aB3cD5eF6gH8iJ0kLmNoPqR"
 FLASK_SECRET = "super-secret-demo-key-do-not-use"
 
 app.config["SECRET_KEY"] = FLASK_SECRET

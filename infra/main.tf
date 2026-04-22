@@ -160,8 +160,8 @@ resource "azurerm_container_group" "app" {
     environment_variables = {
       DB_PATH = "/tmp/demo.db"
       # VULN: secret in plain env var
-      AWS_ACCESS_KEY_ID     = "AKIAIOSFODNN7EXAMPLE"
-      AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+      AWS_ACCESS_KEY_ID     = "AKIAZ7XDEMO4CNAPPDEV2"
+      AWS_SECRET_ACCESS_KEY = "Xy9pQ2vR7sT4uVwZ1aB3cD5eF6gH8iJ0kLmNoPqR"
     }
   }
 }

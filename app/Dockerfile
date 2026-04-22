@@ -4,7 +4,7 @@
 #  - running as root
 #  - no HEALTHCHECK
 #  - ADD over HTTP
-FROM python:3.8.0
+FROM python:3.7.9
 
 ENV PYTHONUNBUFFERED=1
 

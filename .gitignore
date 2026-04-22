@@ -1,0 +1,11 @@
+# Local state/artifacts — but intentionally NOT ignoring .env for the demo
+# so secret scanning has something to find.
+__pycache__/
+*.pyc
+demo.db
+
+# Terraform
+infra/.terraform/
+infra/*.tfstate
+infra/*.tfstate.backup
+infra/.terraform.lock.hcl

@@ -1,0 +1,39 @@
+# Microsoft Security DevOps (MSDO) action.
+# Runs IaC + container scanners (Template Analyzer, Terrascan, Checkov, Trivy, ...)
+# and uploads SARIF to GitHub code scanning. Results also flow to Defender for
+# Cloud -> DevOps security once the GitHub connector is configured.
+name: MSDO
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  msdo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET (required by MSDO)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Run Microsoft Security DevOps
+        id: msdo
+        uses: microsoft/security-devops-action@latest
+        with:
+          categories: "IaC,containers,secrets"
+
+      - name: Upload SARIF to GitHub code scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.msdo.outputs.sarifFile }}

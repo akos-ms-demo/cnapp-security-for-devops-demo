@@ -17,6 +17,8 @@ terraform {
 
 provider "azurerm" {
   features {}
+  # MCAPS policy forbids shared-key auth on storage accounts; force AAD for data plane.
+  storage_use_azuread = true
 }
 
 variable "location" {
@@ -94,45 +96,16 @@ resource "azurerm_storage_account" "sa" {
 
   allow_nested_items_to_be_public = true
   public_network_access_enabled   = true
-  enable_https_traffic_only       = false
+  https_traffic_only_enabled      = false
   min_tls_version                 = "TLS1_0"
 }
 
-resource "azurerm_storage_container" "public" {
-  name                  = "public-data"
-  storage_account_name  = azurerm_storage_account.sa.name
-  container_access_type = "container" # anonymous blob + container list
-}
-
 ############################################################
-# VULN: Azure SQL Server with weak admin creds hardcoded,
-# public network access, firewall open to the entire internet,
-# auditing/TDE/AAD-admin not configured.
-# Checkov CKV_AZURE_23 / CKV_AZURE_24 / CKV_AZURE_27
+# NOTE: Azure SQL Server creation is blocked by MCAPS deny
+# policy in this tenant. The open NSG + public storage + public
+# ACI are enough to drive the Phase 3-5 Defender for Cloud
+# recommendations and attack-path narrative.
 ############################################################
-resource "azurerm_mssql_server" "sql" {
-  name                         = "${var.prefix}-sql"
-  resource_group_name          = azurerm_resource_group.rg.name
-  location                     = azurerm_resource_group.rg.location
-  version                      = "12.0"
-  administrator_login          = "sqladmin"
-  administrator_login_password = "P@ssw0rd1234!" # pragma: allowlist secret
-  public_network_access_enabled = true
-  minimum_tls_version           = "1.0"
-}
-
-resource "azurerm_mssql_firewall_rule" "allow_all" {
-  name             = "allow-all-internet"
-  server_id        = azurerm_mssql_server.sql.id
-  start_ip_address = "0.0.0.0"
-  end_ip_address   = "255.255.255.255"
-}
-
-resource "azurerm_mssql_database" "db" {
-  name      = "${var.prefix}-db"
-  server_id = azurerm_mssql_server.sql.id
-  sku_name  = "Basic"
-}
 
 ############################################################
 # VULN: Public container instance exposing the vulnerable app
@@ -148,7 +121,7 @@ resource "azurerm_container_group" "app" {
 
   container {
     name   = "web"
-    image  = "ghcr.io/OWNER/cnapp-security-for-devops-demo:latest"
+    image  = "ghcr.io/akos-ms-demo/cnapp-security-for-devops-demo:latest"
     cpu    = "0.5"
     memory = "1.0"
 
@@ -168,8 +141,4 @@ resource "azurerm_container_group" "app" {
 
 output "app_fqdn" {
   value = azurerm_container_group.app.fqdn
-}
-
-output "sql_server_fqdn" {
-  value = azurerm_mssql_server.sql.fully_qualified_domain_name
 }

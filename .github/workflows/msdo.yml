@@ -32,6 +32,9 @@ jobs:
         uses: microsoft/security-devops-action@latest
         with:
           categories: "IaC,containers,secrets"
+          # Demo: fail the PR check when high-severity findings are detected.
+          # Remove / set to 'false' to keep the workflow green on findings.
+          break: true
 
       - name: Upload SARIF to GitHub code scanning
         uses: github/codeql-action/upload-sarif@v3

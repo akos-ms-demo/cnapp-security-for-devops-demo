@@ -37,6 +37,30 @@ def get_db():
     return conn
 
 
+def init_db():
+    conn = get_db()
+    conn.executescript(
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            id       INTEGER PRIMARY KEY,
+            username TEXT NOT NULL,
+            password TEXT NOT NULL
+        );
+        """
+    )
+    cur = conn.execute("SELECT COUNT(*) AS n FROM users")
+    if cur.fetchone()["n"] == 0:
+        conn.executemany(
+            "INSERT INTO users (username, password) VALUES (?, ?)",
+            [("alice", "password123"), ("bob", "hunter2")],
+        )
+    conn.commit()
+    conn.close()
+
+
+init_db()
+
+
 @app.route("/")
 def index():
     return "CNAPP DevSecOps demo app. Try /login, /search, /ping, /hash."

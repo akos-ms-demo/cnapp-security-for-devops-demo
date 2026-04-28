@@ -20,10 +20,22 @@ print(">>> imports OK", flush=True)
 
 app = Flask(__name__)
 
-# --- VULN 1: Hardcoded secret (secret scanning / CodeQL py/hardcoded-credentials)
-# Looks like an AWS access key so GitHub secret scanning triggers.
-AWS_ACCESS_KEY_ID = "AKIAZ7XDEMO4CNAPPDEV2"
-AWS_SECRET_ACCESS_KEY = "Xy9pQ2vR7sT4uVwZ1aB3cD5eF6gH8iJ0kLmNoPqR"
+# --- VULN 1: Hardcoded secrets (secret scanning / CodeQL py/hardcoded-credentials)
+# Mix of partner-detector patterns and generic high-entropy strings so that
+# GitHub Advanced Security secret scanning fires regardless of allowlists.
+# All values are inert demo placeholders.
+AWS_ACCESS_KEY_ID = "AKIAIOSFODNN7EXAMPLE"
+AWS_SECRET_ACCESS_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+# Azure Storage account connection string (GHAS partner detector, no allowlist).
+AZURE_STORAGE_CONNECTION_STRING = (
+    "DefaultEndpointsProtocol=https;AccountName=cnappdemoacct;"
+    "AccountKey=Q2RlbW9LZXlGb3JDTkFQUFNlY3VyaXR5RGVtb09ubHlOb3RSZWFsMTIzNDU2Nzg5MA==;"
+    "EndpointSuffix=core.windows.net"
+)
+# GitHub PAT-shaped token (ghp_ prefix is detected even when revoked/inactive).
+GITHUB_TOKEN = "ghp_1A2b3C4d5E6f7G8h9I0jK1L2m3N4o5P6q7R8"
+# Generic high-entropy secret -- caught by "non-provider patterns" detector.
+API_KEY = "8f7d9c1b2e4a6f3d5c7b9e1a3f5d7c9b1e3a5f7d"
 FLASK_SECRET = "super-secret-demo-key-do-not-use"
 
 app.config["SECRET_KEY"] = FLASK_SECRET

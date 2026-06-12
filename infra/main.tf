@@ -80,6 +80,19 @@ resource "azurerm_network_security_group" "nsg" {
     source_address_prefix      = "Internet"
     destination_address_prefix = "*"
   }
+
+  # Demo: new rule added in a PR to show MSDO inline annotation.
+  security_rule {
+    name                       = "allow-mongo-from-internet"
+    priority                   = 130
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "27017"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 }
 
 ############################################################
